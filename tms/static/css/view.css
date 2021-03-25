@@ -1,0 +1,406 @@
+
+body {
+    font: 400 15px/1.8 Lato, sans-serif;
+    background-color: #242333;
+    color: #fff;
+  }
+
+  button {
+    background-color: #B03060;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+  }
+
+  button:hover {
+    background-color: #a32f5b;
+  }
+  
+  h1, h2, h3{
+    margin: 5px 0 10px 0;
+    font-style: italic;
+    color: #111;
+  }
+
+  h4, h5 {
+    margin: 5px 0 10px 0;
+    color: #B03060;
+  }
+
+  .container{
+   margin-top: 40px;
+}
+  .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      width: 100%;
+    }
+  
+.sidenav {
+  margin-top: 51px;
+  height: 100%;
+  width: 220px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+.sidenav a {
+  padding: 12px 6px 6px 20px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+#ref {
+  padding-top: 325px;
+  padding-left: 50px;
+} 
+
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+  .seat {
+    background-color: #444451;
+    height: 15px;
+    width: 20px;
+    margin: 3px;
+  }
+  
+  .normal {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  .reverse {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+.seat.booked {
+    background-color: #FF4500;
+  }
+
+  .seat.selected {
+    background-color: #6feaf6;
+  }
+
+  .seat.occupied {
+    background-color: #fff;
+  }
+  .seat.idle {
+    background-color: #fada5e;
+  }
+  .row .col1:nth-of-type(1){
+    margin-right: 10px;
+  }
+  .row .col2 ~ .col2 ~ .col2 ~ .col2 {
+    margin-right: 10px;
+  }
+  .row .col3 ~ .col3 ~ .col3 ~ .col3 {
+    margin-right: 10px;
+  }
+  .row .col4{
+    margin-right: 100px;
+  }
+  .row .col5{
+    margin-right: 10px;
+  }
+  .row .col6 ~ .col6 ~ .col6 ~ .col6 {
+    margin-right: 10px;
+  }
+  .row .col7 ~ .col7 ~ .col7 ~ .col7 {
+    margin-right: 10px;
+  }
+  .row .col8{
+    margin-right: 100px;
+  }
+  .row .col9{
+    margin-right: 10px;
+  }
+  .row .col10 ~ .col10 ~ .col10 ~ .col10 {
+    margin-right: 10px;
+  }
+  .row .col11 ~ .col11 ~ .col11 ~ .col11 {
+    margin-right: 10px;
+  }
+  .seat:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+  }
+
+  .seatshow {
+    background-color: #444451;
+    height: 15px;
+    width: 20px;
+    margin: 3px;
+  }
+
+  .showcase .seatshow:hover {
+    cursor: default;
+    transform: scale(1.2);
+  }
+
+  .showcase {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 2px 10px;
+    border-radius: 15px;
+    color: #777;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    position: relative;
+    left: 20%;
+  }
+
+  .showcase li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10px;
+  }
+
+  .showcase li small {
+    margin-left: 2px;
+  }
+
+  .row {
+    display: flex;
+    height: 25px;
+    margin-left: 50px;
+  }
+
+  .table {
+    height: 20px;
+    width: 280px;
+    background-color: #fff;
+  }
+  .row .tablecol2 {
+    margin-left: 100px;
+  }
+  .row .tablecol3 {
+    margin-left: 100px;
+  }
+  
+.book-table {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.guidebtn:hover {
+  text-align: center;
+  transform: scale(1.1);
+
+}
+.overlay {
+  height: 0%;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.9);
+  overflow-y: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 10%;
+  width: 100%;
+  margin-top: 30px;
+  text-align: center;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay {overflow-y: auto;}
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+  font-size: 40px;
+  top: 15px;
+  right: 35px;
+  }
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+.hide-slide{
+  text-align: right;
+}
+
+.seatText {
+  visibility: hidden;
+  background-color: black;
+  color:#B03060;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 5px;
+  position: absolute;
+  z-index: 1;
+  width:40px;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -20px;
+  opacity: 0.8;
+}
+
+.seatText::after {
+  content: " ";
+  position: absolute;
+  top: 100%; /* At the bottom of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+}
+
+.seatText1 {
+  visibility: hidden;
+  width: 100px;
+  background-color: black;
+  color: #B03060;
+  text-align: center;
+  font-size: 75%;
+  border-radius: 6px;
+  padding: 5px 0;
+  opacity: 0.8;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  margin-left: -50px;
+}
+
+.seatText1::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;  /* At the top of the tooltip */
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+
+
+
+.seat:hover .seatText {
+  visibility: visible;
+}
+
+.seat:hover .seatText1 {
+  visibility: visible;
+}
+
+.glow {
+  color: #fff;
+  -webkit-animation: glow 1s ease-in-out infinite alternate;
+  -moz-animation: glow 1s ease-in-out infinite alternate;
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #e60073, 0 0 40px #e60073, 0 0 50px #e60073, 0 0 60px #e60073, 0 0 70px #e60073;
+  }
+  
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 30px #ff4da6, 0 0 40px #ff4da6, 0 0 50px #ff4da6, 0 0 60px #ff4da6, 0 0 70px #ff4da6, 0 0 80px #ff4da6;
+  }
+}
