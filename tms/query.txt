@@ -1,4 +1,5 @@
 use djangodatabase;
+DROP TABLE IF EXISTS transportbooking;
 DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS customer;
 
@@ -30,7 +31,7 @@ CREATE TABLE trips(
     end_date DATE,
     status INT  DEFAULT 0, 
     PRIMARY KEY(trip_id),
-    CHECK (status in ('0','1')),
+    CHECK (status in (0,1)),
     FOREIGN KEY(customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE
 );
 
@@ -39,3 +40,33 @@ VALUES ("Manali", "Trip to Manali", "2017-06-05", "2017-06-15","1","1");
 
 INSERT INTO trips(title, description, start_date, end_date,customer_id,status)
 VALUES ("Goa", "Trip to Goa", "2017-03-21", "2017-03-28","1","1");
+
+CREATE TABLE transportbooking(
+    tr_id INT AUTO_INCREMENT,
+    trip_id INT,
+    type VARCHAR(10) ,
+    from_loc VARCHAR(30) NOT NULL,
+    to_loc VARCHAR(30) NOT NULL,
+    trans_name VARCHAR(50),
+    cost INT DEFAULT 0,
+    departure DATETIME NOT NULL,
+    arrival DATETIME NOT NULL,
+    status INT  DEFAULT 0, 
+    ticket VARCHAR(2000),
+    PRIMARY KEY(tr_id),
+    CHECK (status in (0,1)),
+    CHECK(type IN ('Bus', 'Train', 'Flight')),
+    FOREIGN KEY(trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+);
+
+INSERT INTO transportbooking(trip_id, type, from_loc, to_loc,trans_name,cost,departure,arrival,status)
+VALUES ("1","Bus","Delhi","Dehradun","Redbus1","2000","2017-06-05 13:23:44", "2017-06-10 13:23:44","1");
+
+INSERT INTO transportbooking(trip_id, type, from_loc, to_loc,trans_name,cost,departure,arrival,status)
+VALUES ("1","Train","Dehradun","Manali","Shatabdi","2500","2017-06-10 13:23:44", "2017-06-15 13:23:44","1");
+
+INSERT INTO transportbooking(trip_id, type, from_loc, to_loc,trans_name,cost,departure,arrival,status)
+VALUES ("2","Flight","Ahmedabad","Mumbai","Spicejet","1000","2017-03-21 13:23:44", "2017-03-25 13:23:44","1");
+
+INSERT INTO transportbooking(trip_id, type, from_loc, to_loc,trans_name,cost,departure,arrival,status)
+VALUES ("2","Train","Mumbai","Goa","Indigo","2500","2017-03-25 13:23:44", "2017-03-28 13:23:44","1");
