@@ -125,10 +125,12 @@ def profile(request):
 			address = request.POST["address"]
 			mobile = request.POST["mobile"]
 			gender = request.POST["gender"]
+			#dob=request.POST["dob"]
+			password=request.POST["password"]
 			cursor = connections['default'].cursor()
 			cursor.execute(
-				"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s, gender = %s",
-				[first_name, last_name, emailid, mobile, address, gender])
+				"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s,password=%s",
+				[first_name, last_name, emailid, mobile, address,password])
 
 		# print(first_name, last_name, email)
 		with connection.cursor() as cursor:
@@ -142,7 +144,8 @@ def profile(request):
 			'address': row[4],
 			'mobile': row[5],
 			'email': row[6],
-			'dob': row[7]
+			'password' : row[7],
+			'dob': row[8]
 		}
 		return render(request, 'user/profile.html', context)
 	return redirect('user:login')
