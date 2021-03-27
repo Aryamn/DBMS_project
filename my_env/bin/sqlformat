@@ -1,4 +1,4 @@
-#!/home/archit/dbmsproj/my_env/bin/python3
+#!/home/archit/miniproj/my_env/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys

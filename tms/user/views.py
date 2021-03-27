@@ -1,45 +1,148 @@
+from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, UserUpdateForm
-# from Student.models import chat,messenger
+from django.db import connection, transaction
+from django.db import connections
+from datetime import datetime
+# from .forms import signupform
 
+# Create your views here.
+from django.http import HttpResponse
 
-# def home(request):
-# 	auth = get_object_or_404(authenticate)
-# 	if request.user.is_authenticated:
-# 		logout(request)
-# 	return render(request,'home/home.html', {'flag':auth.login})
-
+# def register(request):
+# 	if 'user_id' in request.session:
+# 		return redirect('user:profile')
+#     context = {}
+#     if request.method == 'POST':
+#     	s_form = signupform(request.POST)
+#     	if s_form.is_valid():
+#     		password = request.POST.get('password')
+#     		confirm_password = request.POST.get('confirm_password')
+#     		if password != confirm_password:
+# 	            messages.error(request, f'Passwords do not match')
+# 	            context = {
+# 	                'message': 'password and confirm password not matching',
+# 	                'type': 'error'
+# 	            }
+# 	            return render(request, 'user/signup.html', context)
+# 	        cursor = connections['default'].cursor()
+#         	cursor.execute("INSERT INTO customer(first_name, last_name, email,password, DoB)  VALUES (%s, %s, %s,%s,%s)",
+#                        [first_name, last_name, email, password, date_of_birth])
+#         	return redirect('user:login')
+#         first_name = request.POST["first_name"]
+#         last_name = request.POST["last_name"]
+#         email = request.POST["email"]
+#         password = request.POST["password"]
+#         confirm_password = request.POST["confirm_password"]
+#         date_of_birth = request.POST["dob"]    
+#     else:
+#     	s_form = searchform()
+#     return render(request, 'user/register.html', {'s_form':s_form})
 
 def register(request):
-	if request.method =='POST':
-		form = UserRegisterForm(request.POST)
-		if form.is_valid():
-			form.save()
-			username = form.cleaned_data.get('username')
-			messages.success(request, f'Your account has been created! You are now able to log in')
-			return redirect('login')
+	if 'customer_id' in request.session:
+		messages.error(request, f'Please Logout First')
+		return redirect('user:profile')
+	context = {}
+	if request.method == 'POST':
+		first_name = request.POST["first_name"]
+		last_name = request.POST["last_name"]
+		gender = request.POST["gender"]
+		address = request.POST["address"]
+		mobile = request.POST["mobile"] 
+		emailid = request.POST["email"]
+		password = request.POST["password"]
+		confirm_password = request.POST["confirm_password"]
+		date_of_birth = request.POST["dob"]
+		if len(mobile) != 10:
+			messages.error(request, f'Mobile No. should be of exactly 10 digits')
+			return render(request, 'user/register.html', context)
+		if password != confirm_password:
+			messages.error(request, f'Password and Confirm Password do not match')
+			context = {
+				'log_in': False
+			}
+			return render(request, 'user/register.html', context)
+		cursor = connections['default'].cursor()
+		try:
+			cursor.execute("INSERT INTO customer(first_name, last_name, gender, address, mobile, emailid, password, dob)  VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
+					   [first_name, last_name, gender, address, mobile, emailid, password, date_of_birth])
+		except Exception as error:
+			error_str = str(error)
+			if 'customer_chk_2' in error_str:
+				messages.error(request, f'Mobile No. in Wrong Format')
+			if 'customer_chk_3' in error_str:
+				messages.error(request, f'Email ID in Wrong Format')
+			return render(request, 'user/register.html',{'log_in':False})
+		return redirect('user:login')
 	else:
-		form = UserRegisterForm()
-	return render(request, 'user/register.html', {'form': form})
+		gender_list = ["Male","Female","Other"]
+		return render(request, 'user/register.html',{'genders':gender_list,'log_in':False})
 
-@login_required
+
+def login(request):
+	if 'customer_id' in request.session:
+		messages.error(request, f'Please Logout First')
+		return redirect('user:profile')
+	context = {}
+	if request.method == 'POST':
+		emailid = request.POST["email"]
+		password = request.POST["password"]
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * from customer WHERE emailid = %s AND password = %s", [emailid, password])
+			row = cursor.fetchone()
+			if row is None:
+				messages.error(request, f'User Not found! If you are new you may register first.')
+				context = {
+					'message': 'The email address or mobile number you entered is not connected to an account',
+					'type': 'error',
+					'log_in': False
+				}
+				return render(request, 'user/login.html', {'log_in': False})
+
+			request.session['customer_id'] = row[0]  
+			return redirect('user:profile')
+
+	else:
+		return render(request, 'user/login.html',{'log_in': False})
+
+
+def logout(request):
+	if 'customer_id' in request.session:
+		del request.session['customer_id']
+		return redirect('user:login')
+	else:
+		return redirect('user:login')
+
+
 def profile(request):
-	return render(request, 'user/profile.html')
+	context = {}
+	if 'customer_id' in request.session:
+		if request.method == 'POST':
+			first_name = request.POST["first_name"]
+			last_name = request.POST["last_name"]
+			emailid = request.POST["email"]
+			address = request.POST["address"]
+			mobile = request.POST["mobile"]
+			gender = request.POST["gender"]
+			cursor = connections['default'].cursor()
+			cursor.execute(
+				"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s, gender = %s",
+				[first_name, last_name, emailid, mobile, address, gender])
 
-def update(request):
-	if request.method =='POST':
-		u_form = UserUpdateForm(request.POST, instance=request.user)
-		prev_username = request.user.username
-		if u_form.is_valid(): 
-			u_form.save()
-			username = u_form.cleaned_data.get('username')
-			messages.success(request, f'Your account has been updated!')
-			return redirect('profile')
-	else:
-		u_form = UserUpdateForm(instance=request.user)	
-	context = {
-		'u_form': u_form,
-	}
-	return render(request, 'user/update.html', context)
+		# print(first_name, last_name, email)
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT * from customer WHERE customer_id = %s", [request.session['customer_id']])
+			row = cursor.fetchone()
+		context = {
+			'log_in': True,
+			'first_name': row[1],
+			'last_name': row[2],
+			'gender': row[3],
+			'address': row[4],
+			'mobile': row[5],
+			'email': row[6],
+			'dob': row[7]
+		}
+		return render(request, 'user/profile.html', context)
+	return redirect('user:login')

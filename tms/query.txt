@@ -1,0 +1,19 @@
+use djangodatabase;
+
+DROP TABLE IF EXISTS customer;
+
+CREATE TABLE customer(
+    customer_id INT AUTO_INCREMENT,
+    first_name VARCHAR(30) not null,
+    last_name VARCHAR(30),
+    gender VARCHAR(10) CHECK(gender IN ('Male', 'Female', 'Other')),
+    address VARCHAR(100),
+    mobile VARCHAR(10) not null CHECK(mobile NOT LIKE '%[^0-9]%'),
+    emailid VARCHAR(50) not null CHECK(emailid LIKE '%_@_%._%'),
+    password VARCHAR(30) not null,
+    dob DATE,
+    PRIMARY KEY(customer_id)
+);
+
+INSERT INTO customer(first_name, last_name, gender, address, mobile, emailid, password, dob)
+VALUES ("me", "le", "Male", "meme", "1234567890", "me@gmail.com", "meow", "2017-06-15");
