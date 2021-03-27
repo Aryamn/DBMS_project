@@ -1,5 +1,5 @@
 use djangodatabase;
-
+DROP TABLE IF EXISTS trips;
 DROP TABLE IF EXISTS customer;
 
 CREATE TABLE customer(
@@ -17,3 +17,25 @@ CREATE TABLE customer(
 
 INSERT INTO customer(first_name, last_name, gender, address, mobile, emailid, password, dob)
 VALUES ("me", "le", "Male", "meme", "1234567890", "me@gmail.com", "meow", "2017-06-15");
+
+
+
+CREATE TABLE trips(
+    trip_id INT AUTO_INCREMENT,
+    customer_id INT,
+    title VARCHAR(30) not null,
+    description VARCHAR(30),
+    drive_link VARCHAR(100),
+    start_date DATE,
+    end_date DATE,
+    status INT  DEFAULT 0, 
+    PRIMARY KEY(trip_id),
+    CHECK (status in ('0','1')),
+    FOREIGN KEY(customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE
+);
+
+INSERT INTO trips(title, description, start_date, end_date,customer_id,status)
+VALUES ("Manali", "Trip to Manali", "2017-06-05", "2017-06-15","1","1");
+
+INSERT INTO trips(title, description, start_date, end_date,customer_id,status)
+VALUES ("Goa", "Trip to Goa", "2017-03-21", "2017-03-28","1","1");
