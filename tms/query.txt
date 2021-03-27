@@ -1,4 +1,7 @@
 use djangodatabase;
+DROP TABLE IF EXISTS notifications;
+DROP TABLE IF EXISTS itinerarybooking;
+DROP TABLE IF EXISTS itinerary;
 DROP TABLE IF EXISTS hotelbooking;
 DROP TABLE IF EXISTS hotel;
 DROP TABLE IF EXISTS location;
@@ -105,6 +108,7 @@ CREATE TABLE hotel(
     location_id INT,
     rating INT DEFAULT 5,
     address VARCHAR(70),
+    CHECK (rating>=0 AND rating<=5),
     PRIMARY KEY(hotelid),
     FOREIGN KEY(location_id) REFERENCES location(location_id) ON DELETE CASCADE
 );
@@ -138,4 +142,42 @@ CREATE TABLE hotelbooking(
     PRIMARY KEY(hotelbookid),
     FOREIGN KEY(hotelid) REFERENCES hotel(hotelid) ON DELETE CASCADE,
     FOREIGN KEY(trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+);
+
+CREATE TABLE itinerary(
+    itinerary_id INT AUTO_INCREMENT,
+    location_id INT,
+    name VARCHAR(40) NOT NULL,
+    rating INT DEFAULT 5,
+    address VARCHAR(70),
+    CHECK (rating>=0 AND rating<=5),
+    PRIMARY KEY(itinerary_id),
+    FOREIGN KEY(location_id) REFERENCES location(location_id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE itinerarybooking(
+    itinerarybookid INT AUTO_INCREMENT,
+    trip_id INT,
+    itineraryid INT,
+    title VARCHAR(50),
+    address VARCHAR(50),
+    visit_time DATETIME NOT NULL,
+    ticket_price INT DEFAULT 0,
+    status INT  DEFAULT 0, 
+    CHECK (status in (0,1)),
+    PRIMARY KEY(itinerarybookid),
+    FOREIGN KEY(itineraryid) REFERENCES itinerary(itinerary_id) ON DELETE CASCADE,
+    FOREIGN KEY(trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+);
+
+CREATE TABLE notifications(
+    note_id INT AUTO_INCREMENT,
+    trip_id INT,
+    category INT NOT NULL,
+    time DATETIME NOT NULL,
+    CHECK (category<=10),
+    PRIMARY KEY(note_id),
+    FOREIGN KEY(trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
+
 );
