@@ -21,7 +21,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
   
 </head>
-<body style="background-image: url('{% static 'base/back.jpeg' %}'); background-repeat:no-repeat; background-attachment: fixed; background-size: 1300px 650px;">
+{% if log_in %}
+  <body style=" background-color: white;">
+  {% else %}
+    <body style="background-image: url('{% static 'base/back.jpeg' %}'); background-repeat:no-repeat; background-attachment: fixed; background-size: 1300px 650px;">
+  {% endif %}
 
 <nav class="navbar navbar-inverse" style="background-color: #111;">
   <div class="container-fluid">
@@ -38,7 +42,7 @@
     <div class="collapse navbar-collapse" id="myNavbar">
       {% if log_in %}
         <ul class="nav navbar-nav">
-          <li><a href="{% url 'user:profile' %}"><i class="fa fa-home fa-lg" aria-hidden="true"></i> {{user.username}}</a></li>
+          <li><a href="{% url 'travel:home' %}"><i class="fa fa-home fa-lg" aria-hidden="true"></i> {{first_name}}</a></li>
         </ul>
       {% endif %}
       <ul class="nav navbar-nav navbar-right">

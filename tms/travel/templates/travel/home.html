@@ -1,0 +1,32 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+	<div class="container-fluid contenedor text-center">
+   <h1 class="text-center">Your Trips</h1>
+   <div class=" container text-center">
+   	<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 container_foto ">
+         <div class="ver_mas text-center">
+            <a href="{% url 'travel:addtrip' %}"><i class="fa fa-plus" aria-hidden="true"></i></a>
+         </div>
+         <article class="text-left">
+            <h2>WANNA ADD<br> NEW TRIP</h2>
+            <h4>Lets Start A New Journey!!</h4>
+         </article>
+         <img src="https://img-aws.ehowcdn.com/400x400/ds-img.studiod.com/Half_Dome_from_Glacier_Point0_1.jpg" alt="">
+      </div>
+   	{% for row in rows %}
+      <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 container_foto ">
+         <div class="ver_mas text-center">
+            <a href="{% url 'user:logout' %}"><i class="fa fa-eye" aria-hidden="true"></i></a>
+         </div>
+         <article class="text-left">
+            <h2>{{row.0}}</h2>
+            <h4>{{row.1}}</h4>
+         </article>
+         <img src="https://pbs.twimg.com/profile_images/781518570018648065/HcvZhTVn_400x400.jpg" alt="">
+      </div>
+      {% endfor %}
+   </div>
+</div>
+{% endblock %}
+

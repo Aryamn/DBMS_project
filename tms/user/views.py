@@ -4,40 +4,9 @@ from django.contrib import messages
 from django.db import connection, transaction
 from django.db import connections
 from datetime import datetime
-# from .forms import signupform
 
 # Create your views here.
 from django.http import HttpResponse
-
-# def register(request):
-# 	if 'user_id' in request.session:
-# 		return redirect('user:profile')
-#     context = {}
-#     if request.method == 'POST':
-#     	s_form = signupform(request.POST)
-#     	if s_form.is_valid():
-#     		password = request.POST.get('password')
-#     		confirm_password = request.POST.get('confirm_password')
-#     		if password != confirm_password:
-# 	            messages.error(request, f'Passwords do not match')
-# 	            context = {
-# 	                'message': 'password and confirm password not matching',
-# 	                'type': 'error'
-# 	            }
-# 	            return render(request, 'user/signup.html', context)
-# 	        cursor = connections['default'].cursor()
-#         	cursor.execute("INSERT INTO customer(first_name, last_name, email,password, DoB)  VALUES (%s, %s, %s,%s,%s)",
-#                        [first_name, last_name, email, password, date_of_birth])
-#         	return redirect('user:login')
-#         first_name = request.POST["first_name"]
-#         last_name = request.POST["last_name"]
-#         email = request.POST["email"]
-#         password = request.POST["password"]
-#         confirm_password = request.POST["confirm_password"]
-#         date_of_birth = request.POST["dob"]    
-#     else:
-#     	s_form = searchform()
-#     return render(request, 'user/register.html', {'s_form':s_form})
 
 def register(request):
 	if 'customer_id' in request.session:
@@ -101,7 +70,7 @@ def login(request):
 				return render(request, 'user/login.html', {'log_in': False})
 
 			request.session['customer_id'] = row[0]  
-			return redirect('user:profile')
+			return redirect('travel:home')
 
 	else:
 		return render(request, 'user/login.html',{'log_in': False})
@@ -125,12 +94,21 @@ def profile(request):
 			address = request.POST["address"]
 			mobile = request.POST["mobile"]
 			gender = request.POST["gender"]
-			#dob=request.POST["dob"]
 			password=request.POST["password"]
+			if len(mobile) != 10:
+				messages.error(request, f'Mobile No. should be of exactly 10 digits')
+				return render(request, 'user/register.html', context)
 			cursor = connections['default'].cursor()
-			cursor.execute(
-				"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s,password=%s",
-				[first_name, last_name, emailid, mobile, address,password])
+			try:
+				cursor.execute(
+					"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s,password=%s",
+					[first_name, last_name, emailid, mobile, address,password])
+			except Exception as error:
+				error_str = str(error)
+				if 'customer_chk_2' in error_str:
+					messages.error(request, f'Mobile No. in Wrong Format')
+				if 'customer_chk_3' in error_str:
+					messages.error(request, f'Email ID in Wrong Format')
 
 		# print(first_name, last_name, email)
 		with connection.cursor() as cursor:
