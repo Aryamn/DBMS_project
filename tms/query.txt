@@ -41,6 +41,13 @@ VALUES ("Manali", "Trip to Manali", "2017-06-05", "2017-06-15","1","1");
 INSERT INTO trips(title, description, start_date, end_date,customer_id,status)
 VALUES ("Goa", "Trip to Goa", "2017-03-21", "2017-03-28","1","1");
 
+INSERT INTO trips(title, description, start_date, end_date,customer_id,status)
+VALUES ("Sikkim", "Trip to Sikkim", "2017-06-05", "2017-06-15","1","1");
+
+INSERT INTO trips(title, description, start_date, end_date,customer_id,status)
+VALUES ("Andaman", "Trip to Andaman", "2017-03-21", "2017-03-28","1","1");
+
+
 CREATE TABLE transportbooking(
     tr_id INT AUTO_INCREMENT,
     trip_id INT,
