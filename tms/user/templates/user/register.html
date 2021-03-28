@@ -1,9 +1,11 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-    <form class="" method="POST" action="{% url 'user:signup' %}" >
+{% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <!-- <form class="" method="POST" action="{% url 'user:signup' %}" >
         {% csrf_token %}
-        <!-- component -->
         <div class="bg-grey-lighter min-h-screen flex flex-col">
             <div class="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
                 <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
@@ -80,5 +82,82 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form> -->
+
+<div class="signup-form">
+ <form class="form-horizontal" method="POST" action="{% url 'user:signup' %}" >
+        {% csrf_token %}              
+        <div class="row">
+                <div class="col-8 offset-4">
+                    <h2>Sign Up</h2>
+                </div>	
+              </div>			
+            <div class="form-group row">
+                <label class="col-form-label col-4">First Name</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="first_name"  required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Last Name</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="last_name"  required="required">
+                </div>        	
+            </div>
+            
+            <div class="form-group row">
+                <label class="col-form-label col-4">Email Address</label>
+                <div class="col-8">
+                    <input type="email" class="form-control" name="email"  required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Password</label>
+                <div class="col-8">
+                    <input type="password" class="form-control" name="password"  required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Confirm Password</label>
+                <div class="col-8">
+                    <input type="password" class="form-control" name="confirm_password" required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Gender</label>
+                <div class="col-8">
+                    <select class="form-control" name="gender" required="required">
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                      </select>
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Address</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="address" required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Mobile No.</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="mobile" required="required">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">DOB</label>
+                <div class="col-8">
+                    <input type="date" class="form-control" name="dob" placeholder="Date-of-Birth" required="required">
+                </div>          	
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    <p><label class="form-check-label"><input type="checkbox" required="required"> I accept the <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a>.</label></p>
+                    <button type="submit" class="btn btn-primary btn-lg">Sign Up</button>
+                </div>  
+            </div>		      
+        </form>
+        <div class="text-center" style="color:white;">Already have an account? <a href="{%url 'user:login' %}">Login here</a></div>
+    </div>
 {% endblock %}
