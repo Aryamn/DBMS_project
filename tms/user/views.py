@@ -63,8 +63,6 @@ def login(request):
 			if row is None:
 				messages.error(request, f'User Not found! If you are new you may register first.')
 				context = {
-					'message': 'The email address or mobile number you entered is not connected to an account',
-					'type': 'error',
 					'log_in': False
 				}
 				return render(request, 'user/login.html', {'log_in': False})
@@ -97,18 +95,19 @@ def profile(request):
 			password=request.POST["password"]
 			if len(mobile) != 10:
 				messages.error(request, f'Mobile No. should be of exactly 10 digits')
-				return render(request, 'user/register.html', context)
+				return render(request, 'user/profile.html', context)
 			cursor = connections['default'].cursor()
 			try:
 				cursor.execute(
-					"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s,password=%s",
-					[first_name, last_name, emailid, mobile, address,password])
+					"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s,password=%s WHERE customer_id = %s",
+					[first_name, last_name, emailid, mobile, address,password,request.session['customer_id']])
 			except Exception as error:
 				error_str = str(error)
 				if 'customer_chk_2' in error_str:
 					messages.error(request, f'Mobile No. in Wrong Format')
 				if 'customer_chk_3' in error_str:
 					messages.error(request, f'Email ID in Wrong Format')
+				return render(request, 'user/profile.html', context)
 
 		# print(first_name, last_name, email)
 		with connection.cursor() as cursor:
