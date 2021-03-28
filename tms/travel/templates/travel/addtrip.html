@@ -1,9 +1,11 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-    <form class="" method="POST" action="{% url 'travel:addtrip' %}" >
+{% load static %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/login.css' %}">
+    <!-- <form class="" method="POST" action="{% url 'travel:addtrip' %}" >
         {% csrf_token %}
-        <!-- component -->
         <div class="bg-grey-lighter min-h-screen flex flex-col">
             <div class="container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2">
                 <div class="bg-white px-6 py-8 rounded shadow-md text-black w-full">
@@ -41,5 +43,50 @@
                 </div>
             </div>
         </div>
-    </form>
+    </form> -->
+    <div class="signup-form">
+        <form class="form-horizontal" method="POST" action="{% url 'travel:addtrip' %}" >
+            {% csrf_token %}              
+            <div class="row">
+                <div class="col-8 offset-4">
+                    <h2>Trip Details</h2>
+                </div>	
+              </div>	
+            <div class="form-group row">
+                <label class="col-form-label col-4">Title</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="title" required="required" >
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Description</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="description" required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Drive Link</label>
+                <div class="col-8">
+                    <input type="text" class="form-control" name="drive_link" required="required">
+                </div>        	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">Start Date</label>
+                <div class="col-8">
+                    <input type="date" class="form-control" name="start_date"  required="required">
+                </div>          	
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-4">End Date</label>
+                <div class="col-8">
+                    <input type="date" class="form-control" name="end_date"  required="required">
+                </div>          	
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                </div>  
+            </div>		      
+        </form>
+    </div>
 {% endblock %}

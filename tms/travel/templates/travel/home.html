@@ -1,9 +1,9 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-	<div class="container-fluid contenedor text-center">
+	<div class="container-fluid  text-center"  >
    <h1 class="text-center">Your Trips</h1>
-   <div class=" container text-center">
+   <div class=" container text-center" >
    	<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 container_foto ">
          <div class="ver_mas text-center">
             <a href="{% url 'travel:addtrip' %}"><i class="fa fa-plus" aria-hidden="true"></i></a>
@@ -26,7 +26,7 @@
          <img src="https://pbs.twimg.com/profile_images/781518570018648065/HcvZhTVn_400x400.jpg" alt="">
       </div>
       {% endfor %}
-   </div>
-</div>
+   <!-- </div> -->
+<!-- </div> -->
 {% endblock %}
 

@@ -39,7 +39,8 @@
             </div>
         </div>
     </form> -->
-    <div class="signup-form">
+    <div class="container" >
+    <div class="signup-form" style="margin:auto">
         <form class="form-horizontal" method="POST" action="{% url 'user:login' %}" >
             {% csrf_token %}              
             <div class="row">
@@ -67,4 +68,5 @@
         </form>
         <div class="text-center" style="color:white;">Not yet Registered? <a href="{%url 'user:signup' %}">Register here</a></div>
     </div>
+</div>
 {% endblock %}
