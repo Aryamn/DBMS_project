@@ -38,7 +38,7 @@ CREATE TABLE trips(
     end_date DATE,
     status INT  DEFAULT 0, 
     PRIMARY KEY(trip_id),
-    CHECK (status in (0,1)),
+    CHECK (status in (0,1,2)),
     FOREIGN KEY(customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE
 );
 
@@ -221,9 +221,7 @@ CREATE TABLE notifications(
     trip_id INT,
     category INT NOT NULL,
     time_ DATETIME NOT NULL,
-    status INT  DEFAULT 0,
     CHECK (category<=10),
-    CHECK (status in (0,1)),
     PRIMARY KEY(note_id),
     FOREIGN KEY(trip_id) REFERENCES trips(trip_id) ON DELETE CASCADE
 
