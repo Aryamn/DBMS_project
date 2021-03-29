@@ -1,21 +1,23 @@
 {% extends 'user/base.html' %}
 
 {% block content %}
-<div class="container-fluid">
+{% load static %}
+
+<!-- <div class="container-fluid"> -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
             <!-- Brand -->
-            <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="{% url 'user:profile' %}">Home Page</a>
-        </div>
-    </nav>
+            
     <!-- Header -->
-    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url(https://raw.githack.com/creativetimofficial/argon-dashboard/master/assets/img/theme/profile-cover.jpg); background-size: cover; background-position: center top;">
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url(../../../static/base/caraousel.png); background-size: cover; background-position: center bottom;">
         <!-- Mask -->
-        <span class="mask bg-gradient-default opacity-8"></span>
+        <!-- <span class="mask bg-gradient-default opacity-8"></span> -->
         <!-- Header container -->
     </div>
     <!-- Page content -->
-    <div class="container-fluid mt--7">
-        <div class="row">
-            <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
+    <div class="container-fluid mt--7" >
+        <div class="row card bg-secondary shadow">
+            <!-- <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
                 <div class="card card-profile shadow">
                     <div class="card-body pt-0 pt-md-4">
                         <div class="text-center">
@@ -25,9 +27,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-8 order-xl-1">
-                <div class="card bg-secondary shadow">
+            </div> -->
+            <!-- <div class="col-12 order-xl-1">
+                <div class="card bg-secondary shadow"> -->
                     <div class="card-body">
                         <form class="" method="POST" action="{% url 'user:profile' %}" >
                             {% csrf_token %}
@@ -116,18 +118,50 @@
                             </div>
                         </form>
                     </div>
+                    <div class="col-xl-12 order-xl-1">
+                        <div class="card bg-secondary shadow">
+                            <div class="card-body">
+                                <div class="form-popup" id="myForm">
+                                  <form action="/action_page.php" class="form-container">
+                                    <div class="text-muted mb-4" id="cntbook"></div>
+
+                                    <div class="form-group">
+                                        <label class="form-control-label" for="input-drive-link">Drive Link</label>
+                                        <input type="text" id="input-drive-link" class="form-control form-control-alternative" placeholder="Drive-link" value = "{{drive_link}}" name = "drive_link">
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="closeForm()">-</button>
+                                  </form>
+                                </div>
+                                <button class="btn btn-sm btn-primary" onclick="openForm()">+</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-<footer class="footer">
-    <div class="row align-items-center justify-content-xl-between">
-        <div class="col-xl-6 m-auto text-center">
-            <div class="copyright">
-                <p>Made with <a href="#" target="_blank">Profile Dashboard</a> by Creative Tim</p>
-            </div>
-        </div>
-    </div>
-</footer>
+        <!-- </div> -->
+    <!-- </div>
+</div> -->
+
 {% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+
+var cntbook = 0;
+
+function openForm() 
+{
+  document.getElementById("myForm").style.display = "block";
+  cntbook++;
+  document.getElementById("cntbook").innerHTML = "Booking " + cntbook.toString();
+
+}
+
+function closeForm() 
+{
+  document.getElementById("myForm").style.display = "none";
+  cntbook--;
+}
+
+</script>
+{% endblock javascript %}

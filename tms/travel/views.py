@@ -67,10 +67,12 @@ def updtrip(request,tripid):
 			cursor.execute("UPDATE trips SET title = %s, description = %s, drive_link = %s, start_date = %s, end_date = %s WHERE trip_id = %s",
 					[title, description, drive_link, start_date, end_date, tripid])
 
+			
+
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT * from trips WHERE trip_id = %s", [tripid])
 			row = cursor.fetchone()
-		
+
 		context = {
 			'log_in': True,
 			'first_name': name[0],
