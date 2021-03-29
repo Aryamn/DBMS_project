@@ -25,13 +25,13 @@ def register(request):
 		date_of_birth = request.POST["dob"]
 		if len(mobile) != 10:
 			messages.error(request, f'Mobile No. should be of exactly 10 digits')
-			return render(request, 'user/register.html', context)
+			return redirect('user:register')
 		if password != confirm_password:
 			messages.error(request, f'Password and Confirm Password do not match')
 			context = {
 				'log_in': False
 			}
-			return render(request, 'user/register.html', context)
+			return redirect('user:register')
 		cursor = connections['default'].cursor()
 		try:
 			cursor.execute("INSERT INTO customer(first_name, last_name, gender, address, mobile, emailid, password, dob)  VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
@@ -42,11 +42,10 @@ def register(request):
 				messages.error(request, f'Mobile No. in Wrong Format')
 			if 'customer_chk_3' in error_str:
 				messages.error(request, f'Email ID in Wrong Format')
-			return render(request, 'user/register.html',{'log_in':False})
+			return redirect('user:register')
 		return redirect('user:login')
 	else:
-		gender_list = ["Male","Female","Other"]
-		return render(request, 'user/register.html',{'genders':gender_list,'log_in':False})
+		return render(request, 'user/register.html',{'log_in':False})
 
 
 def login(request):
@@ -91,23 +90,39 @@ def profile(request):
 			emailid = request.POST["email"]
 			address = request.POST["address"]
 			mobile = request.POST["mobile"]
-			gender = request.POST["gender"]
-			password=request.POST["password"]
+			#gender = request.POST["gender"]
+			curr_password=request.POST["curr_password"]
+			new_password=request.POST["new_password"]
+			confirm_password=request.POST["confirm_password"]
 			if len(mobile) != 10:
 				messages.error(request, f'Mobile No. should be of exactly 10 digits')
-				return render(request, 'user/profile.html', context)
+				return redirect('user:profile')
+
+			
 			cursor = connections['default'].cursor()
+			cursor.execute("SELECT * from customer WHERE customer_id = %s", [request.session['customer_id']])
+			row = cursor.fetchone()
+			if curr_password=="" and new_password=="" and confirm_password=="":
+				curr_password=row[7]
+				new_password=row[7]
+				confirm_password=row[7]
+			if curr_password!=row[7] :
+				messages.error(request, f'Current Password incorrect')
+				return redirect('user:profile')
+			if new_password != confirm_password:
+				messages.error(request, f'Password and Confirm Password do not match')
+				return redirect('user:profile')
 			try:
 				cursor.execute(
 					"UPDATE customer SET first_name = %s, last_name = %s, emailid = %s, mobile = %s, address = %s,password=%s WHERE customer_id = %s",
-					[first_name, last_name, emailid, mobile, address,password,request.session['customer_id']])
+					[first_name, last_name, emailid, mobile, address,new_password,request.session['customer_id']])
 			except Exception as error:
 				error_str = str(error)
 				if 'customer_chk_2' in error_str:
 					messages.error(request, f'Mobile No. in Wrong Format')
 				if 'customer_chk_3' in error_str:
 					messages.error(request, f'Email ID in Wrong Format')
-				return render(request, 'user/profile.html', context)
+				return redirect('user:profile')
 
 		# print(first_name, last_name, email)
 		with connection.cursor() as cursor:
@@ -121,7 +136,7 @@ def profile(request):
 			'address': row[4],
 			'mobile': row[5],
 			'email': row[6],
-			'password' : row[7],
+			'curr_password' : "",
 			'dob': row[8]
 		}
 		return render(request, 'user/profile.html', context)

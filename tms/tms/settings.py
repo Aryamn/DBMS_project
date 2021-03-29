@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user.apps.UserConfig',
     'travel.apps.TravelConfig',
+    'notif.apps.NotifConfig',
     'crispy_forms'
 ]
 

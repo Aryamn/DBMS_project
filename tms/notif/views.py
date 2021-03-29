@@ -15,11 +15,12 @@ def notify(request):
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
 			name = cursor.fetchone()
 		with connection.cursor() as cursor:
-			cursor.execute("SELECT time_,category,trip_id from notifications WHERE customer_id = %s ORDER BY time_ DESC", [request.session['customer_id']])
+			cursor.execute("SELECT time_,category,trip_id,status from notifications WHERE customer_id = %s ORDER BY time_ DESC", [request.session['customer_id']])
 			rows = cursor.fetchall()
 
 		for row in rows:
-			
+			if row[0] > datetime.datetime.now() and row[3]==0:
+
 
 		context = {
 			'log_in': True,

@@ -27,7 +27,7 @@
     <!-- <body style="background-image: url('{% static 'base/back.jpeg' %}');"> -->
   {% endif %}
 
-<nav class="navbar navbar-inverse" style="background-color: #111;">
+<nav class="navbar navbar-inverse" style="background-color: #111; z-index: 1000;">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
@@ -72,7 +72,7 @@
       <div class="col-md-10 ">
         {% if messages %}
             {% for message in messages %}
-              <div class="alert alert-{{ message.tags }}">
+              <div class="alert alert-{{ message.tags }} container">
                 {{ message }}
               </div>
             {% endfor %}

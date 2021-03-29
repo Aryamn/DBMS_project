@@ -8,7 +8,8 @@ urlpatterns = [
 	path('', views.home, name='home'),
 	path('addtrip/', views.addtrip, name='addtrip'),
 	path('deltrip/tripid=<tripid>', views.deltrip, name='deltrip'),
-	path('updtrip/tripid=<tripid>', views.updtrip, name='updtrip')
+	path('updtrip/tripid=<tripid>', views.updtrip, name='updtrip'),
+	# path('updtransport/tripid=<tripid>', views.updtransport, name='updtransport')
     # path('logout/', views.logout, name='logout'),
     # path('signup/', views.register, name='signup'),
     # path('profile/', views.profile, name='profile')
