@@ -429,7 +429,7 @@ table, th, td{
 /* The popup form - hidden by default */
 .form-popup 
 {
-  display: none;
+  display: block;
   position: relative;
   bottom: 0;
   right: 15px;
