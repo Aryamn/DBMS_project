@@ -384,8 +384,6 @@ def details(request,tripid):
 			'flag2':flag2
 
 		}
-		print(itineraries)
-		print(final_list)
 		return render(request, 'travel/details.html', context)
 	return redirect('user:login')
 
