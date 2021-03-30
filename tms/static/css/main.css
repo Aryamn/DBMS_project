@@ -224,15 +224,15 @@ body {
 }
 
 
-  .badge { 
-        position: relative; 
-        top: -20px; 
-        left: -10px; 
-        border: 1px solid black; 
-        border-radius: 50%;
-        background-color: #B03060; 
-        color: white;
-       } 
+.badge {
+  position: relative;
+  top: -10px;
+  left: -15px;
+  border: 1px solid black;
+  border-radius: 50%;
+  background-color: #FFFECE;
+  color: green;
+ }
 
 .nopadding {
    padding: 0 !important;

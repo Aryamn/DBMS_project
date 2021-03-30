@@ -6,6 +6,15 @@ from django.db import connections
 from datetime import datetime,timedelta
 
 from notif.views import *
+
+from django.core.files.storage import FileSystemStorage
+from django.conf import settings
+from PIL import Image
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+import json
 # Create your views here.
 from django.http import HttpResponse
 
@@ -113,11 +122,11 @@ def updtrip(request,tripid):
 			cursor.execute("SELECT location_id,place_name from location natural join travels WHERE trip_id = %s", [tripid])
 			row1 = cursor.fetchall()
 			location_options = [i for i in location_options if i not in row1]
-			cursor.execute("SELECT hotelbookid,name,cost,checkin,checkout from hotel natural join hotelbooking WHERE trip_id= %s", [tripid])
+			cursor.execute("SELECT hotelbookid,name,cost,checkin,checkout,booking_doc,id_card from hotel natural join hotelbooking WHERE trip_id= %s", [tripid])
 			row4 = cursor.fetchall()
 			cursor.execute("SELECT itinerarybookid,name,title,ticket_price,visit_time,itinerarybooking.address from itinerarybooking, itinerary WHERE itinerarybooking.itineraryid=itinerary.itineraryid and trip_id= %s", [tripid])
 			row5 = cursor.fetchall()
-			cursor.execute("SELECT tr_id,type,trans_name,departure,arrival,from_loc,to_loc,cost from transportbooking WHERE trip_id= %s", [tripid])
+			cursor.execute("SELECT tr_id,type,trans_name,departure,arrival,from_loc,to_loc,cost,ticket from transportbooking WHERE trip_id= %s", [tripid])
 			row6 = cursor.fetchall()
 			cursor.execute("SELECT hotelid,name,rating from hotel natural join travels WHERE travels.location_id=hotel.location_id and trip_id= %s", [tripid])
 			row2 = cursor.fetchall()
@@ -187,11 +196,21 @@ def updtransport(request,tripid):
 			to_loc = request.POST["to"]
 			trans_name = request.POST["trans_name"]
 			cost = request.POST["cost"]
+			doc = request.FILES
+			if 'document_image' in request.FILES:
+				doc_name = doc['document_image']
+			else:
+				doc_name = False
+			if request.method == 'POST' and doc_name:
+				image = request.FILES['document_image']
+				fs = FileSystemStorage()
+				image_name = fs.save(image.name, image)
+				uploaded_image_url = fs.url(image_name)
 			departure = request.POST["departure"]
 			arrival = request.POST["arrival"]
 			if arrival < departure:
 				messages.error(request, f' You cannot arrive before departing!!')
-			else:
+			elif arrival >= departure and doc_name==False:
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO transportbooking(type,from_loc,to_loc,trans_name,cost,departure,arrival,trip_id)  VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
 						[type_t,from_loc,to_loc,trans_name,cost,departure,arrival, tripid])
@@ -199,6 +218,15 @@ def updtransport(request,tripid):
 				timing = date_time_obj - timedelta(hours=1) 
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],2,timing])
+			elif arrival >= departure and doc_name:
+				cursor = connections['default'].cursor()
+				cursor.execute("INSERT INTO transportbooking(type,from_loc,to_loc,trans_name,cost,departure,arrival,trip_id,ticket)  VALUES (%s,%s, %s, %s,%s,%s,%s,%s,%s)",
+						[type_t,from_loc,to_loc,trans_name,cost,departure,arrival, tripid,uploaded_image_url])
+				date_time_obj = datetime.strptime(departure, '%Y-%m-%d %H:%M:%S.%f')
+				timing = date_time_obj - timedelta(hours=1) 
+				cursor = connections['default'].cursor()
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],2,timing])
+
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
 
@@ -229,14 +257,48 @@ def updhotel(request,tripid):
 			checkout = request.POST["checkout"]
 			# id_card VARCHAR(255),
 			# booking_doc VARCHAR(255),
+			doc = request.FILES
+			if 'document_bookdoc' in request.FILES:
+				doc_name1 = doc['document_bookdoc']
+			else:
+				doc_name1 = False
+			if request.method == 'POST' and doc_name1:
+				image = request.FILES['document_bookdoc']
+				fs = FileSystemStorage()
+				image_name = fs.save(image.name, image)
+				uploaded_image_url1 = fs.url(image_name)
+
+			if 'document_idcard' in request.FILES:
+				doc_name2 = doc['document_idcard']
+			else:
+				doc_name2 = False
+			if request.method == 'POST' and doc_name2:
+				image = request.FILES['document_idcard']
+				fs = FileSystemStorage()
+				image_name = fs.save(image.name, image)
+				uploaded_image_url2 = fs.url(image_name)
 			if checkout < checkin :
 				messages.error(request, f'Hotel Booking not added : You cannot checkout before checkin!!')
 			elif checkout < str(datetime.now()):
 				messages.error(request, f'Hotel Booking not added : You cannot have checkout date before current time!!')
 			else:
-				cursor = connections['default'].cursor()
-				cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost)  VALUES (%s,%s,%s,%s,%s)",
-						[hotelid, tripid,checkin,checkout,cost])
+				if doc_name2==False and doc_name1==False:
+					cursor = connections['default'].cursor()
+					cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost)  VALUES (%s,%s,%s,%s,%s)",
+							[hotelid, tripid,checkin,checkout,cost])
+				elif doc_name2==False and doc_name1:
+					cursor = connections['default'].cursor()
+					cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost,booking_doc)  VALUES (%s,%s,%s,%s,%s,%s)",
+							[hotelid, tripid,checkin,checkout,cost,uploaded_image_url1])
+				elif doc_name2 and doc_name1==False:
+					cursor = connections['default'].cursor()
+					cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost,id_card)  VALUES (%s,%s,%s,%s,%s,%s)",
+							[hotelid, tripid,checkin,checkout,cost,uploaded_image_url2])
+				elif doc_name2 and doc_name1:
+					cursor = connections['default'].cursor()
+					cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost,id_card,booking_doc)  VALUES (%s,%s,%s,%s,%s,%s,%s)",
+							[hotelid, tripid,checkin,checkout,cost,uploaded_image_url2,uploaded_image_url1])
+
 				date_time_obj = datetime.strptime(checkin, '%Y-%m-%d %H:%M:%S.%f')
 				timing = date_time_obj - timedelta(hours=1) 
 				cursor = connections['default'].cursor()
@@ -349,9 +411,9 @@ def details(request,tripid):
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
 			name = cursor.fetchone()
-			cursor.execute("SELECT type,trans_name,from_loc,to_loc,departure,arrival,cost from transportbooking WHERE trip_id = %s", [tripid])
+			cursor.execute("SELECT type,trans_name,from_loc,to_loc,departure,arrival,cost,ticket from transportbooking WHERE trip_id = %s", [tripid])
 			transports = cursor.fetchall()
-			cursor.execute("SELECT name,address,checkin,checkout,cost from hotelbooking natural join hotel WHERE trip_id = %s", [tripid])
+			cursor.execute("SELECT name,address,checkin,checkout,cost,booking_doc,id_card from hotelbooking natural join hotel WHERE trip_id = %s", [tripid])
 			hotels = cursor.fetchall()
 			cursor.execute("SELECT name,itinerarybooking.address,visit_time,ticket_price as cost from itinerarybooking ,  itinerary WHERE itinerarybooking.itineraryid = itinerary.itineraryid  and trip_id = %s", [tripid])
 			itineraries = cursor.fetchall()

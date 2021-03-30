@@ -43,7 +43,7 @@
       {% if log_in %}
         <ul class="nav navbar-nav">
           <li><a style="color: #B5FF33;font-size: 1.5rem;" href="{% url 'travel:home' %}"><i class="fa fa-home icon fa-lg" aria-hidden="true"></i> {{first_name}}</a></li>
-          {% if chat_unseen.count > 0 %}
+          {% if note_count > 0 %}
           <li><a style="color: #B5FF33;font-size: 1.5rem;" href="{% url 'notif:notify' %}"><i class="fa fa-envelope icon fa-lg" aria-hidden="true"></i> <span class="badge">{{note_count}}</span>Notifications</a></li>
             {% else %}
               <li><a style="color: #B5FF33;font-size: 1.5rem;" href="{% url 'notif:notify' %}"><i class="fa fa-envelope icon fa-lg" aria-hidden="true"></i> Notifications</a></li>
