@@ -3,14 +3,15 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db import connection, transaction
 from django.db import connections
-from datetime import datetime
+from datetime import datetime,timedelta
 
-import json
+from notif.views import *
 # Create your views here.
 from django.http import HttpResponse
 
 def home(request):
 	if 'customer_id' in request.session:
+		note_count = notecount(request.session['customer_id'])
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
 			name = cursor.fetchone()
@@ -32,11 +33,12 @@ def home(request):
 			cnt_list[1] = 0
 		if len(past_rows) == 0:
 			cnt_list[2] = 0
-		return render(request, 'travel/home.html', {'rows':rows,'log_in':log_in,'first_name':name[0],'upcoming_rows':upcoming_rows,'past_rows':past_rows,'cnt_list':cnt_list})
+		return render(request, 'travel/home.html', {'rows':rows,'log_in':log_in,'first_name':name[0],'upcoming_rows':upcoming_rows,'past_rows':past_rows,'cnt_list':cnt_list,'note_count':note_count})
 	return redirect('user:login')
 
 def addtrip(request):
 	if 'customer_id' in request.session:
+		note_count = notecount(request.session['customer_id'])
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
 			name = cursor.fetchone()
@@ -58,9 +60,19 @@ def addtrip(request):
 			with connection.cursor() as cursor:
 				cursor.execute("SELECT max(trip_id) from trips WHERE customer_id = %s", [request.session['customer_id']])
 				row = cursor.fetchone()
+			timing = datetime.strptime(start_date,'%Y-%m-%d')
+			timing -= timedelta(days=2) 
+			cursor = connections['default'].cursor()
+			cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",
+						[row[0],0,timing])
+			timing = datetime.strptime(start_date,'%Y-%m-%d')
+			timing -= timedelta(hours=12) 
+			cursor = connections['default'].cursor()
+			cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",
+						[row[0],1,timing])
 			return redirect('travel:updtrip',tripid=row[0])
 		else:
-			return render(request, 'travel/addtrip.html',{'log_in':True,'first_name':name[0]})
+			return render(request, 'travel/addtrip.html',{'log_in':True,'first_name':name[0],'note_count':note_count})
 	return redirect('user:login')
 
 def deltrip(request,tripid):
@@ -73,6 +85,7 @@ def deltrip(request,tripid):
 
 def updtrip(request,tripid):
 	if 'customer_id' in request.session:
+		note_count = notecount(request.session['customer_id'])
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
 			name = cursor.fetchone()
@@ -140,7 +153,6 @@ def updtrip(request,tripid):
 		for i in row6:
 			k = list(i)
 			k.append(j)
-			k[3] = str(k[3])
 			row6f.append(k)
 			j += 1
 
@@ -159,7 +171,8 @@ def updtrip(request,tripid):
 			'transportlist' : row6f,
 			'hotels':row2,
 			'itinerary': row3,
-			'tripid': tripid
+			'tripid': tripid,
+			'note_count':note_count
 		}
 		return render(request, 'travel/updtrip.html', context)
 	return redirect('user:login')
@@ -182,6 +195,10 @@ def updtransport(request,tripid):
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO transportbooking(type,from_loc,to_loc,trans_name,cost,departure,arrival,trip_id)  VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
 						[type_t,from_loc,to_loc,trans_name,cost,departure,arrival, tripid])
+				date_time_obj = datetime.strptime(departure, '%Y-%m-%d %H:%M:%S.%f')
+				timing = date_time_obj - timedelta(hours=1) 
+				cursor = connections['default'].cursor()
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],2,timing])
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
 
@@ -220,6 +237,10 @@ def updhotel(request,tripid):
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost)  VALUES (%s,%s,%s,%s,%s)",
 						[hotelid, tripid,checkin,checkout,cost])
+				date_time_obj = datetime.strptime(checkin, '%Y-%m-%d %H:%M:%S.%f')
+				timing = date_time_obj - timedelta(hours=1) 
+				cursor = connections['default'].cursor()
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],3,timing])
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
 	
@@ -248,6 +269,10 @@ def upditinerary(request,tripid):
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO itinerarybooking(trip_id,itineraryid,title,address,visit_time,ticket_price)  VALUES (%s,%s,%s,%s,%s,%s)",
 						[tripid,itineraryid,title,address,visit_time,ticket_price])
+				date_time_obj = datetime.strptime(visit_time, '%Y-%m-%d %H:%M:%S.%f')
+				timing = date_time_obj - timedelta(hours=1) 
+				cursor = connections['default'].cursor()
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],4,timing])
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
 
@@ -319,6 +344,7 @@ def delitinerary(request,itinerarybookid):
 
 def details(request,tripid):
 	if 'customer_id' in request.session:
+		note_count = notecount(request.session['customer_id'])
 		context={}
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
@@ -340,6 +366,7 @@ def details(request,tripid):
 			l2=["ID","Hotel Name","Address","Checkin","Checkout","Cost"]
 			l3=["ID","Itinerary Title","Address","Visit Time","Ticket Price"]
 			final_list=[]
+			total_cost=0
 			for itr in range(total) :
 				s=""
 				l=[]
@@ -357,14 +384,18 @@ def details(request,tripid):
 				if idx==0 : 
 					l.append("0")
 					l.append(transports[i])
+					total_cost+=int(transports[i][6])
 					i=i+1
+					
 				elif idx==1 : 
 					l.append("1")
 					l.append(hotels[j])
+					total_cost+=int(hotels[j][4])
 					j=j+1
 				else : 
 					l.append("2")
 					l.append(itineraries[k])
+					total_cost+=int(itineraries[k][3])
 					k=k+1	
 				final_list.append(l)
 
@@ -373,7 +404,9 @@ def details(request,tripid):
 			flag2 = False
 
 		flag1 = True
-		if trip_data[4] == None:
+		if trip_data[4] is None:
+			flag1 = False
+		if trip_data[4] == "":
 			flag1 = False
 		context = {
 			'log_in': True,
@@ -381,7 +414,9 @@ def details(request,tripid):
 			'final_list': final_list,
 			'trip_data':trip_data,
 			'flag1':flag1,
-			'flag2':flag2
+			'flag2':flag2,
+			'total_cost':total_cost,
+			'note_count':note_count
 
 		}
 		return render(request, 'travel/details.html', context)

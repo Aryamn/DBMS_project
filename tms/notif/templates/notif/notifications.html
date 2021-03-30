@@ -4,19 +4,24 @@
 {% load static %}
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
 <!-- <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}"> -->
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<!-- <link rel="stylesheet" href=""> -->
 <div class="container text-center">
   <h1>Notifications</h1>
 </div>
 <div class="container">
-<div class="w3-card-4">
-  <header class="w3-container w3-grey">
-    <h4>Header</h4>
-  </header>
-  <div class="w3-container">
-    <p>Lorem ipsum...</p>
-  </div>
-</div>
+	{% for i in ndict %}
+
+	<div class="panel panel-default">
+	  <header class="panel-heading">
+	    <h4>{{i.1}}</h4>
+	  </header>
+	  <div class="panel-body">
+	    <p>{{i.2}}</p>
+	    <p><a href="{% url 'travel:details' i.0 %}">View</a> the trip details</p>
+	  </div>
+	</div>
+
+	{% endfor %}
 </div>
 
 {% endblock %}

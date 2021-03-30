@@ -5,6 +5,8 @@ from django.db import connection, transaction
 from django.db import connections
 from datetime import datetime
 
+from notif.views import *
+
 # Create your views here.
 from django.http import HttpResponse
 
@@ -106,6 +108,7 @@ def cnt_trips(request):
 def profile(request):
 	context = {}
 	if 'customer_id' in request.session:
+		note_count = notecount(request.session['customer_id'])
 		if request.method == 'POST':
 			first_name = request.POST["first_name"]
 			last_name = request.POST["last_name"]
@@ -160,7 +163,8 @@ def profile(request):
 			'mobile': row[5],
 			'email': row[6],
 			'curr_password' : "",
-			'dob': row[8]
+			'dob': row[8],
+			'note_count':note_count
 		}
 		context.update(context1)
 		return render(request, 'user/profile.html', context)
