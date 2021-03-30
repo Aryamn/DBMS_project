@@ -80,6 +80,28 @@ def logout(request):
 	else:
 		return redirect('user:login')
 
+def cnt_trips(request):
+	context={}
+	if 'customer_id' in request.session:
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT count(*) from trips WHERE customer_id = %s",[request.session['customer_id']])
+			total_trips = cursor.fetchone()
+			print(total_trips)
+			cursor.execute("SELECT count(*) from trips WHERE customer_id = %s and end_date < %s",[request.session['customer_id'],(datetime.now().date())])
+			previous_trips = cursor.fetchone()
+			
+			cursor.execute("SELECT count(*) from trips WHERE customer_id = %s and start_date > %s",[request.session['customer_id'],(datetime.now().date())])
+			upcoming_trips = cursor.fetchone()
+			ongoing_trips = total_trips[0]-(previous_trips[0]+upcoming_trips[0])
+			print(ongoing_trips,upcoming_trips[0],previous_trips[0])
+			context = {
+				'previous_trips': previous_trips[0],
+				'upcoming_trips': upcoming_trips[0],
+				'ongoing_trips': ongoing_trips,
+				'total_trips':total_trips[0]
+			}
+			return context
+	return redirect('user:profile')
 
 def profile(request):
 	context = {}
@@ -128,6 +150,7 @@ def profile(request):
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT * from customer WHERE customer_id = %s", [request.session['customer_id']])
 			row = cursor.fetchone()
+			context1=cnt_trips(request)
 		context = {
 			'log_in': True,
 			'first_name': row[1],
@@ -139,5 +162,7 @@ def profile(request):
 			'curr_password' : "",
 			'dob': row[8]
 		}
+		context.update(context1)
 		return render(request, 'user/profile.html', context)
 	return redirect('user:login')
+

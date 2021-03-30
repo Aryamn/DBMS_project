@@ -22,7 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('user.urls')),
     path('travel/', include('travel.urls')),
-    # path('user/notif/', include('notif.urls'))
+    path('user/notif/', include('notif.urls'))
 ]
 
 if settings.DEBUG:
