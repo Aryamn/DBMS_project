@@ -27,13 +27,13 @@ def register(request):
 		date_of_birth = request.POST["dob"]
 		if len(mobile) != 10:
 			messages.error(request, f'Mobile No. should be of exactly 10 digits')
-			return redirect('user:register')
+			return redirect('user:signup')
 		if password != confirm_password:
 			messages.error(request, f'Password and Confirm Password do not match')
 			context = {
 				'log_in': False
 			}
-			return redirect('user:register')
+			return redirect('user:signup')
 		cursor = connections['default'].cursor()
 		try:
 			cursor.execute("INSERT INTO customer(first_name, last_name, gender, address, mobile, emailid, password, dob)  VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
@@ -44,7 +44,7 @@ def register(request):
 				messages.error(request, f'Mobile No. in Wrong Format')
 			if 'customer_chk_3' in error_str:
 				messages.error(request, f'Email ID in Wrong Format')
-			return redirect('user:register')
+			return redirect('user:signup')
 		return redirect('user:login')
 	else:
 		return render(request, 'user/register.html',{'log_in':False})

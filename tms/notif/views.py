@@ -32,7 +32,7 @@ def notify(request):
 		notifs = []
 		for row in rows:
 			notif_dict = []
-			if row[0] < datetime.now():
+			if row[0] <= datetime.now():
 				time1 = row[0] + timedelta(hours=1)
 				notif_dict.append(row[2]) 
 				with connection.cursor() as cursor:
@@ -50,33 +50,45 @@ def notify(request):
 					notif_dict.append(msg) 
 				elif row[1] == 2:
 					with connection.cursor() as cursor:
-						cursor.execute("SELECT type from transportbooking WHERE trip_id = %s,departure = %s", [row[2],time1])
+						cursor.execute("SELECT type from transportbooking WHERE trip_id = %s and departure = %s", [row[2],time1])
 						transport = cursor.fetchone()
+					if(transport is None):
+						cursor = connections['default'].cursor()
+						cursor.execute("DELETE from notifications WHERE note_id = %s", [row[3]])
+						continue
 					header = "Hurry!!"
 					notif_dict.append(header) 
-					msg = trip[0] + ": You have your " + str(transport[0]) + " in 1 hour i.e. at " + str(time1.time()) + " . Buckle up faster for this ride"
+					msg = str(trip[0]) + ": You have your " + str(transport[0]) + " in 1 hour i.e. at " + str(time1.time()) + " . Buckle up faster for this ride"
 					notif_dict.append(msg) 
 				elif row[1] == 3:
 					with connection.cursor() as cursor:
-						cursor.execute("SELECT hotelid from hotelbooking WHERE trip_id = %s, checkin = %s", [row[2],time1])
+						cursor.execute("SELECT hotelid from hotelbooking WHERE trip_id = %s and checkin = %s", [row[2],time1])
 						hotel = cursor.fetchone()
+					if(hotel is None):
+						cursor = connections['default'].cursor()
+						cursor.execute("DELETE from notifications WHERE note_id = %s", [row[3]])
+						continue
 					with connection.cursor() as cursor:
 						cursor.execute("SELECT name from hotel WHERE hotelid = %s", [hotel[0]])
 						hotelname = cursor.fetchone()
 					header = "Hurry!!"
 					notif_dict.append(header) 
-					msg = trip[0] + ": You have your " + str(hotelname[0]) + " hotel checkin in 1 hour i.e. at " + str(time1.time()) + " . Buckle up faster for this ride"
+					msg = str(trip[0]) + ": You have your " + str(hotelname[0]) + " hotel checkin in 1 hour i.e. at " + str(time1.time()) + " . Buckle up faster for this ride"
 					notif_dict.append(msg) 
 				elif row[1] == 4:
 					with connection.cursor() as cursor:
-						cursor.execute("SELECT itineraryid from itinerarybooking WHERE trip_id = %s,visit_time = %s", [row[2],time1])
+						cursor.execute("SELECT itineraryid from itinerarybooking WHERE trip_id = %s and visit_time = %s", [row[2],time1])
 						itinerary = cursor.fetchone()
+					if(itinerary is None):
+						cursor = connections['default'].cursor()
+						cursor.execute("DELETE from notifications WHERE note_id = %s", [row[3]])
+						continue
 					with connection.cursor() as cursor:
 						cursor.execute("SELECT name from itinerary WHERE itineraryid = %s", [itinerary[0]])
 						itineraryname = cursor.fetchone()
 					header = "Hurry!!"
 					notif_dict.append(header) 
-					msg = trip[0] + ": You have your " + str(itinerary[0]) + " visiting time in 1 hour i.e. at " + str(time1.time()) + ". Buckle up faster for this adventure"
+					msg = str(trip[0]) + ": You have your " + str(itinerary[0]) + " visiting time in 1 hour i.e. at " + str(time1.time()) + ". Buckle up faster for this adventure"
 					notif_dict.append(msg) 
 				notifs.append(notif_dict)
 				cursor = connections['default'].cursor()

@@ -191,6 +191,7 @@
 						<div class="outer">
 							<button type="submit" class="btn btn-danger inner"> Delete </button>
 						</div>
+					</div>
 				</form>
 				{% endfor %}
 			</div>
@@ -247,21 +248,21 @@
 											<label class="form-control-label" for="input-drive-link">From
 												Location</label>
 											<input type="text" id="input-drive-link"
-												class="form-control form-control-alternative" name="from">
+												class="form-control form-control-alternative" name="from" required="required">
 										</div>
 									</div>
 									<div class="col-lg-6">
 										<div class="form-group">
 											<label class="form-control-label" for="input-drive-link">To Location</label>
 											<input type="text" id="input-drive-link"
-												class="form-control form-control-alternative" name="to">
+												class="form-control form-control-alternative" name="to" required="required">
 										</div>
 									</div>
 									<div class="col-lg-6">
 										<div class="form-group focused">
 											<label class="form-control-label" for="input-cost">Cost</label>
 											<input type="number" id="input-cost"
-												class="form-control form-control-alternative" name="cost">
+												class="form-control form-control-alternative" name="cost" value="0">
 										</div>
 									</div>
 									<div class="col-lg-6">
@@ -401,7 +402,7 @@
 									<div class="form-group focused">
 										<label class="form-control-label" for="input-cost">Cost</label>
 										<input type="number" id="input-cost"
-											class="form-control form-control-alternative" name="cost">
+											class="form-control form-control-alternative" name="cost" value="0">
 									</div>
 								</div>
 								<div class="col-lg-6">
@@ -541,7 +542,7 @@
 									<div class="form-group focused">
 										<label class="form-control-label" for="input-cost">Ticket Price</label>
 										<input type="number" id="input-cost"
-											class="form-control form-control-alternative" name="ticket_price">
+											class="form-control form-control-alternative" name="ticket_price" value="0"> 
 									</div>
 								</div>
 								<div class="col-lg-6">

@@ -25,7 +25,7 @@ def home(request):
 			cursor.execute("SELECT first_name from customer WHERE customer_id = %s", [request.session['customer_id']])
 			name = cursor.fetchone()
 		with connection.cursor() as cursor:
-			cursor.execute("SELECT title, description,trip_id from trips WHERE customer_id = %s and start_date < %s and end_date > %s", [request.session['customer_id'],datetime.now().date(),datetime.now().date()])
+			cursor.execute("SELECT title, description,trip_id from trips WHERE customer_id = %s and start_date <= %s and end_date >= %s", [request.session['customer_id'],datetime.now().date(),datetime.now().date()])
 			rows = cursor.fetchall()
 		with connection.cursor() as cursor:
 			cursor.execute("SELECT title, description,trip_id from trips WHERE customer_id = %s and start_date > %s" , [request.session['customer_id'],datetime.now().date()])
@@ -87,7 +87,7 @@ def addtrip(request):
 def deltrip(request,tripid):
 	if 'customer_id' in request.session:
 		cursor = connections['default'].cursor()
-		cursor.execute("DELETE from trips WHERE trip_id = %s", tripid)
+		cursor.execute("DELETE from trips WHERE trip_id = %s", [tripid])
 		return redirect('travel:home')
 	return redirect('user:login')
 
@@ -214,18 +214,18 @@ def updtransport(request,tripid):
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO transportbooking(type,from_loc,to_loc,trans_name,cost,departure,arrival,trip_id)  VALUES (%s, %s, %s,%s,%s,%s,%s,%s)",
 						[type_t,from_loc,to_loc,trans_name,cost,departure,arrival, tripid])
-				date_time_obj = datetime.strptime(departure, '%Y-%m-%d %H:%M:%S.%f')
+				date_time_obj = datetime.strptime(departure, '%Y-%m-%dT%H:%M')
 				timing = date_time_obj - timedelta(hours=1) 
 				cursor = connections['default'].cursor()
-				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],2,timing])
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[tripid,2,timing])
 			elif arrival >= departure and doc_name:
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO transportbooking(type,from_loc,to_loc,trans_name,cost,departure,arrival,trip_id,ticket)  VALUES (%s,%s, %s, %s,%s,%s,%s,%s,%s)",
 						[type_t,from_loc,to_loc,trans_name,cost,departure,arrival, tripid,uploaded_image_url])
-				date_time_obj = datetime.strptime(departure, '%Y-%m-%d %H:%M:%S.%f')
+				date_time_obj = datetime.strptime(departure, '%Y-%m-%dT%H:%M')
 				timing = date_time_obj - timedelta(hours=1) 
 				cursor = connections['default'].cursor()
-				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],2,timing])
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[tripid,2,timing])
 
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
@@ -299,10 +299,10 @@ def updhotel(request,tripid):
 					cursor.execute("INSERT INTO hotelbooking(hotelid,trip_id,checkin,checkout,cost,id_card,booking_doc)  VALUES (%s,%s,%s,%s,%s,%s,%s)",
 							[hotelid, tripid,checkin,checkout,cost,uploaded_image_url2,uploaded_image_url1])
 
-				date_time_obj = datetime.strptime(checkin, '%Y-%m-%d %H:%M:%S.%f')
+				date_time_obj = datetime.strptime(checkin, '%Y-%m-%dT%H:%M')
 				timing = date_time_obj - timedelta(hours=1) 
 				cursor = connections['default'].cursor()
-				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],3,timing])
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[tripid,3,timing])
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
 	
@@ -320,7 +320,7 @@ def upditinerary(request,tripid):
 			if itineraryid != "Custom" :
 				cursor = connections['default'].cursor()
 				with connection.cursor() as cursor:
-					cursor.execute("SELECT address from itinerary  WHERE  and itineraryid= %s", [itineraryid])
+					cursor.execute("SELECT address from itinerary  WHERE  itineraryid= %s", [itineraryid])
 					row = cursor.fetchone()
 				address=row[0]
 			else : 
@@ -331,10 +331,10 @@ def upditinerary(request,tripid):
 				cursor = connections['default'].cursor()
 				cursor.execute("INSERT INTO itinerarybooking(trip_id,itineraryid,title,address,visit_time,ticket_price)  VALUES (%s,%s,%s,%s,%s,%s)",
 						[tripid,itineraryid,title,address,visit_time,ticket_price])
-				date_time_obj = datetime.strptime(visit_time, '%Y-%m-%d %H:%M:%S.%f')
+				date_time_obj = datetime.strptime(visit_time, '%Y-%m-%dT%H:%M')
 				timing = date_time_obj - timedelta(hours=1) 
 				cursor = connections['default'].cursor()
-				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[row[0],4,timing])
+				cursor.execute("INSERT INTO notifications(trip_id,category,time_)  VALUES (%s,%s,%s)",[tripid,4,timing])
 		return redirect('travel:updtrip',tripid=tripid)
 	return redirect('user:login')
 
